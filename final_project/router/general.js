@@ -38,11 +38,20 @@ public_users.post("/register", (req,res) => {
     return res.status(404).json({message: "Unable to register user."});
 });
 
+function getBooks() {
+    return new Promise((resolve, reject) => {
+      // Simulate asynchronous operation
+      resolve(JSON.stringify(books,null,4));
+    });
+  }
+
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
+public_users.get('/',async (req, res) => {
   //Write your code here
   //return res.status(300).json({message: "Yet to be implemented"});
-  res.send(JSON.stringify(books,null,4));
+  //res.send(JSON.stringify(books,null,4));
+  const allBooks = await getBooks();
+  res.send(allBooks);
 });
 
 // Get book details based on ISBN
@@ -109,15 +118,11 @@ public_users.get('/review/:isbn',function (req, res) {
 
   if(isbn){
     for(key in books){
-        console.log("key :"+key);
         if(key == isbn){
             res.send(books[key].reviews);
-            break;
         }
     }
-    
   }
- 
 });
 
 module.exports.general = public_users;
