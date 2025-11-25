@@ -54,60 +54,78 @@ public_users.get('/',async (req, res) => {
   res.send(allBooks);
 });
 
+function getBooksForISBN(isbn) {
+    return new Promise((resolve, reject) => {
+      // Simulate asynchronous operation
+      resolve(books[isbn]);
+    });
+  }
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
+public_users.get('/isbn/:isbn',async (req, res) =>{
   //Write your code here
   //return res.status(300).json({message: "Yet to be implemented"});
-  const isbn = req.params.isbn;
-  if(isbn){
-    res.send(books[isbn]);
-  }
+  
+  const bookData = await getBooksForISBN(req.params.isbn);
+  res.send(bookData);
+  
  });
+
+ function getBooksByAuthor(author) {
+    return new Promise((resolve, reject) => {
+      // Simulate asynchronous operation
+      const booksKeys = [];
+      let i=0;
+        for(let key in books){
+            booksKeys[i++] = key;
+        }
+        let selectedBook = [];
+        
+        for(i =0; i < booksKeys.length; i++){
+            if(books[booksKeys[i]].author == author){
+                selectedBook.push(books[booksKeys[i]]);
+            }
+        }
+        resolve(selectedBook);
+    });
+  }
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
+public_users.get('/author/:author',async (req, res) => {
   //Write your code here
   //return res.status(300).json({message: "Yet to be implemented"});
-  const author = req.params.author;
-  const booksKeys = [];
   
-  if(author){
-    let i=0;
-    for(let key in books){
-        booksKeys[i++] = key;
-    }
-    let selectedBook = [];
-    
-    for(i =0; i < booksKeys.length; i++){
-        if(books[booksKeys[i]].author == author){
-            selectedBook.push(books[booksKeys[i]]);
-        }
-    }
+    const selectedBook = await getBooksByAuthor(req.params.author);
     res.send(selectedBook);
-  }
+  
 });
 
+function getBooksByTitle(title) {
+    return new Promise((resolve, reject) => {
+      // Simulate asynchronous operation
+      const booksKeys = [];
+      let i=0;
+        for(let key in books){
+            booksKeys[i++] = key;
+        }
+        let selectedBook = [];
+        
+        for(i =0; i < booksKeys.length; i++){
+            if(books[booksKeys[i]].title == title){
+                selectedBook.push(books[booksKeys[i]]);
+            }
+        }
+        
+        resolve(selectedBook);
+    });
+  }
+
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
+public_users.get('/title/:title',async (req, res) => {
   //Write your code here
   //return res.status(300).json({message: "Yet to be implemented"});
-  const title = req.params.title;
-  const booksKeys = [];
+  const selectedBook = await getBooksByTitle(req.params.title);
+  res.send(selectedBook);
   
-  if(title){
-    let i=0;
-    for(let key in books){
-        booksKeys[i++] = key;
-    }
-    let selectedBook = [];
-    
-    for(i =0; i < booksKeys.length; i++){
-        if(books[booksKeys[i]].title == title){
-            selectedBook.push(books[booksKeys[i]]);
-        }
-    }
-    res.send(selectedBook);
-  }
 });
 
 //  Get book review
