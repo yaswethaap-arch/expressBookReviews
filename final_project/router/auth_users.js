@@ -61,19 +61,23 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 regd_users.post("/auth/review/:isbn",(req,res)=>{
     const isbn = req.params.isbn;
     const review = req.query.review;
-
-    let selectedBook = books[isbn];
-    let reviews = selectedBook.reviews;
     const username = req.body.username;
-    
-    let isReviewPresent = reviews[username];
-    console.log("isReviewPresent :"+isReviewPresent);
-    if(isReviewPresent){
-        reviews[username] = review;
-    }else{
-        reviews.push({username:review});
-    }
 
+    let reviews = books[isbn].reviews;
+    reviews[username] = review;
+    
+    books[isbn].reviews = reviews;
+    
+    res.send("Review "+review+" has been added for isbn : "+isbn+" and user : "+username);
+});
+
+regd_users.delete("/auth/review/:isbn",(req,res)=>{
+    const isbn = req.params.isbn;
+    const username = req.session.authorization['username'];
+    let review = books[isbn].reviews[username];
+    delete books[isbn].reviews[username];
+    
+    res.send("Review "+review+" has been deleted for isbn : "+isbn+" and user : "+username);
 });
 
 module.exports.authenticated = regd_users;
